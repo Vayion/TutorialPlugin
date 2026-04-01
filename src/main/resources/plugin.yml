@@ -1,0 +1,9 @@
+name: Tutorial
+version: '1.0-SNAPSHOT'
+main: de.vayion.tutorial.Tutorial
+api-version: '1.20'
+
+commands:
+  start:
+  selectTask:
+  endTask:
