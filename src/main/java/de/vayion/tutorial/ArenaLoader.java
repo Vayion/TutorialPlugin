@@ -12,6 +12,7 @@ import com.sk89q.worldedit.function.operation.Operation;
 import com.sk89q.worldedit.function.operation.Operations;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.session.ClipboardHolder;
+import de.vayion.tutorial.commands.GetRelativePos;
 import de.vayion.tutorial.commands.StartCmd;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -38,12 +39,16 @@ public class ArenaLoader implements Listener {
     private final int X_LENGTH = 23;
     private final int Y_LENGTH = 31;
 
+    private Clipboard arena = null;
+
     private int Z_MIN = 100;
 
     public ArenaLoader(Tutorial main) {
         this.main = main;
         main.getServer().getPluginManager().registerEvents(this, main);
         main.getCommand("start").setExecutor(new StartCmd(this));
+        main.getCommand("getRelativePos").setExecutor(new GetRelativePos(this));
+
     }
 
     public Location getOffset(int x, int y, int z, int index) {
@@ -51,6 +56,16 @@ public class ArenaLoader implements Listener {
         offset.add(x, y, z);
         offset.add((int)((X_LENGTH+1)/2)+index*X_LENGTH, 2, (int)((Y_LENGTH+1)/2));
         return offset;
+    }
+
+    public Vector getRelativePosition(Location loc, int index) {
+        Vector offset = anchor.toVector();
+        offset.add(new Vector((int)((X_LENGTH+1)/2)+index*X_LENGTH, 2, (int)((Y_LENGTH+1)/2)));
+
+        Vector diff = loc.clone().toVector().subtract(offset);
+
+        return diff;
+
     }
 
     public void pasteCentered(Clipboard clipboard, Location targetLocation) {
@@ -75,21 +90,29 @@ public class ArenaLoader implements Listener {
         Z_MIN = startLocation.getBlockZ();
         anchor = startLocation;
         players = _players;
-        Clipboard clipboard = loadSchematic("Arena");
-        if(clipboard == null) {
-            return;
-        }
 
+
+        arena = loadSchematic("Arena");
+        if(arena == null) {
+            // cause null error exception because I forgot how to disable a plugin
+
+            arena.getDimensions();
+        }
 
 
         for (int i = 0; i < players.size(); i++) {
             Player player = players.get(i);
-
-            pasteCentered(clipboard, getOffset(0,3,0, i));
+            resetArena(i);
             player.teleport(getOffset(0, 0, 0, i));
         }
+
+
     }
 
+    public void resetArena(int index) {
+
+        pasteCentered(arena, getOffset(0,3,0, index));
+    }
 
     public Clipboard loadSchematic(String schem) {
 
@@ -162,5 +185,9 @@ public class ArenaLoader implements Listener {
 
     public Tutorial getMain() {
         return main;
+    }
+
+    public List<Player> getPlayers() {
+        return players;
     }
 }
