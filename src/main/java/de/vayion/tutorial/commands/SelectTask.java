@@ -37,6 +37,10 @@ public class SelectTask implements CommandExecutor
                         AbstractTask mazeTask = new LabTask(new Vector(-3, 1, 2), taskManager.getMain().getArenaLoader().loadSchematic("maze"), new Vector(0,0,-4), taskManager.getMain().getArenaLoader(), taskManager.getMain().getArenaLoader().getPlayers());
 
                     break;
+
+                    default:
+                        AbstractTask defaultTask = new LabTask(new Vector(0, 0, -4), taskManager.getMain().getArenaLoader().loadSchematic("maze"), new Vector(0,0,-4), taskManager.getMain().getArenaLoader(), taskManager.getMain().getArenaLoader().getPlayers());
+                        break;
                 }
             }
         }
